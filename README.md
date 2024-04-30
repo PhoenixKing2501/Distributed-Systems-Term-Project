@@ -1,4 +1,4 @@
-# Distributed-Term-Project
+# Distributed-Systems-Term-Project
 
 ## Members
 - Utsav Basu - 20CS30057
