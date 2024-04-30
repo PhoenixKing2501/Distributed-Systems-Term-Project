@@ -8,8 +8,11 @@
 - Gaurav Malakar - 20CS10029
 - Bhanu Teja - 20CS10059
 
-## Demo video
+## Demo
+The link for the demo video is:
 [Demo Video](https://iitkgpacin-my.sharepoint.com/:v:/g/personal/utsavbasu_kgpian_iitkgp_ac_in/EX0FYFyrxzFBiHAGggi76-kBuLHDZ-hFvYgNRqIqqhWA8w?e=gH5SSa)
+
+An example set of communication logs and ESP final predictions are given in folder [./udp/logs](./udp/logs). Here ESP-3 was shutdown after local time 15 and restarted after some time. The logs show how the ESP-3 catches up with the other ESPs.
 
 ## Task Description
 The project is divided into two parts:
