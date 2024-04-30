@@ -42,9 +42,13 @@ The json data is sent over an UDP port.
 
 2. `udp_server`
 
-This thread receives data from the `inference_task` threads over the UDP port. Every `1` second(s), it checks to see whether there is any data avaible over the UDP port. It saves the information from the `inference_task` threads in a log file. This log file is stored inside a little filesystem of the ESP itself. In case of failures, the log file persists. When the failed ESP again comes online, this thread ensures that the ESP starts from the last checkpoint itself. This is done using the logical timestamp.
+This thread receives data from the `inference_task` threads over the UDP port. Every `1` second(s), it checks to see whether there is any data avaible over the UDP port. It saves the information from the `inference_task` threads in a log file. This log file is stored inside a little filesystem of the ESP itself. In case of failures, the log file persists. When the failed ESP again comes online, this thread ensures that the ESP starts from the last checkpoint itself. This is done using the logical timestamp. In the little filesystem, the two files are managed. `comm_logs.txt` stores the communications logs whereas `info.txt` stores the ESP predictions.
 
 3. `print_info`
 
+This thread prints the information received from all the `inference_task` threads, i.e. the ESPs. It reaches consensus using the logical timestamp values: the prediction with the latest timestamp is the overall prediction.
 
+4. `server`
 
+This thread acts as a web server to view the files stored inside the ESP's own little filesystem.
+`comm_logs.txt` can be viewed by sending a GET request to `/comms` whereas `info.txt` can be viewed by sending a GET request to `/info`.
