@@ -45,7 +45,7 @@ The relevant files are contained inside `./model`. The usage of the important on
 The relevant file `ds_proj.ino` is present in `./ds_proj`. The live system is managed by four threads. They are as follows:
 #### 1. `inference_task`
 
-This thread essentially simulates an ESP. It performs the model inference from the ESP readings. Every `5` second(s), it generates some random inputs, uses the trained model for inference and creates the following json file:
+It performs the model inference from the ESP readings. Every `5` second(s), it generates some random inputs, uses the trained model for inference and creates the following json file:
 ```json
 {
     "id": "<id of the ESP>",
@@ -54,17 +54,17 @@ This thread essentially simulates an ESP. It performs the model inference from t
 }
 ```
 
-The json data is sent over an UDP port.
+The json data is sent to other ESPs via UDP.
 
 #### 2. `udp_server`
 
-This thread receives data from the `inference_task` threads over the UDP port. Every `1` second(s), it checks to see whether there is any data avaible over the UDP port. It saves the information from the `inference_task` threads in a log file. This log file is stored inside a little filesystem of the ESP itself. In case of failures, the log file persists. When the failed ESP again comes online, this thread ensures that the ESP starts from the last checkpoint itself. This is done using the logical timestamp. In the little filesystem, the two files are managed. `comm_logs.txt` stores the communications logs whereas `info.txt` stores the ESP predictions.
+This thread receives data from other ESPs via other UDP. It checks to see whether there is any data avaible over the UDP port and saves the information in its state and in a log file. To merge the incoming state and the present state, we keep the state for which the timestamp of the corresponding ESP is higher. This log file is stored inside a little filesystem of the ESP itself. In case of failures, the log file persists. When the failed ESP again comes online, this thread ensures that the ESP starts from the last checkpoint itself. This is done using the logical timestamp. In the littleFS, the two files are managed. `comm_logs.txt` stores the communications logs whereas `info.txt` stores the ESP predictions.
 
 #### 3. `print_info`
 
-This thread prints the information received from all the `inference_task` threads, i.e. the ESPs. It reaches consensus using the logical timestamp values: the prediction with the latest timestamp is the overall prediction.
+This thread prints the information stored in the state of ESP. It reaches consensus using the logical timestamp values: the prediction with the latest timestamp is the overall prediction. **_This thread can be modified to perform certain actions based on the consensus reached._**
 
 #### 4. `server`
 
-This thread acts as a web server to view the files stored inside the ESP's own little filesystem.
+This thread hosts a HTTP web server to view the files stored inside the ESP's own littleFS.
 `comm_logs.txt` can be viewed by sending a GET request to `/comms` whereas `info.txt` can be viewed by sending a GET request to `/info`.
